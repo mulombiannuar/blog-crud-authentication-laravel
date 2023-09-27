@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Blog\CategoryController;
 use App\Http\Controllers\Blog\PostController;
@@ -35,9 +36,17 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('about', 'aboutPage')->name('about');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'auth.otp'])->group(function () {
 
     //Logged in user routes
+
+    //Auth controller
+    Route::controller(AuthController::class)->prefix('auth')->name('auth.')->group(function () {
+        Route::get('otp/verify', 'otpToken')->name('otp');
+        Route::post('otp/verify', 'verifyOTPToken')->name('otp.verify');
+    });
+
+    //Posts routes
     Route::resource('posts', PostController::class, ['except' => ['index']]);
 
     // Admin routes

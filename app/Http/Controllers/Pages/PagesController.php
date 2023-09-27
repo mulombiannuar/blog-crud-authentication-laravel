@@ -13,6 +13,7 @@ class PagesController extends Controller
 {
     public function homePage(): View
     {
+        //dd(geoip()->getClientIP());
         $pageData = [
             'title' => 'Home',
             'categories' => Category::all(),
