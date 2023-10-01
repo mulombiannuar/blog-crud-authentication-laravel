@@ -20,12 +20,12 @@ class CheckOTPAuth
     {
         if (!$this->isOTPVerified()) {
             //dd('OTP is not verified');
-            return redirect(route('auth.otp.verify'))->with('danger', 'You must verify OTP to proceed');;
+            return redirect(route('auth.otp.verify'))->with('warning', 'You must verify OTP to proceed');;
         }
 
         if ($this->hasOTPExpired()) {
 
-            $this->forgetSessionOTP();
+            $this->forgetSession();
 
             Auth::logout();
 

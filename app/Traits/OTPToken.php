@@ -16,7 +16,7 @@ trait OTPToken
     //Check if OTP is verified
     public function isOTPVerified(): bool
     {
-        //dd(session('session_id'));
+        //dd($this->getCurrentSession());
         return $this->getCurrentSession()->is_verified ? true : false;
     }
 
@@ -36,7 +36,7 @@ trait OTPToken
         //check if the otp has already expired
         if ($this->hasOTPExpired()) {
 
-            $this->forgetSessionOTP();
+            $this->forgetSession();
 
             Auth::logout();
 
@@ -53,16 +53,25 @@ trait OTPToken
         }
 
         if ($otp == session('session_otp')) {
-            $this->forgetSessionOTP();
 
             //Update otp verified
-            DB::table('otp_tokens')->where('session_id', session('session_id'))->update([
-                'is_verified' => now(),
-                'has_expired' => now(),
-            ]);
+            $this->verify();
+
+            //$this->forgetSession();
+            session()->forget('session_otp');
+
             return 'verified';
         }
         return 'not-verified';
+    }
+
+    //verify
+    private function verify(): void
+    {
+        DB::table('otp_tokens')->where('session_id', session('session_id'))->update([
+            'is_verified' => now(),
+            //'has_expired' => now(),
+        ]);
     }
 
 
@@ -88,17 +97,13 @@ trait OTPToken
         $life_time = $this->getOTPLifeTime();
         $current_session =  $this->getCurrentSession();
         if (!$current_session->has_expired) {
-            if ($life_time > $expiration_time) {
-                DB::table('otp_tokens')->where('session_id', session('session_id'))->update([
-                    'is_verified' => now(),
-                    'has_expired' => now(),
-                ]);
-            }
+            if ($life_time > $expiration_time)
+                $this->verify();
         }
     }
 
     //Forget session OTP
-    public function forgetSessionOTP(): void
+    public function forgetSession(): void
     {
         /// Forget the current otp session variable
         session()->forget('session_otp');

@@ -31,12 +31,12 @@ class AuthController extends Controller
     public function verifyOTPToken(VerifyOTPRequest $request): RedirectResponse
     {
         $response = $this->verifySessionOTP($request->otp);
-        dd($response);
+        // dd($response);
         if ($response === 'expired')
             return redirect(route('login'))->with('danger', 'Your OTP has expired. Login to proceed');
 
         if ($response === 'verified' || $response === 'already-verified')
-            return redirect(route('login'))->with('success', 'You are logged in successfully');
+            return redirect(route('dashboard'))->with('success', 'You are logged in successfully');
 
         return redirect(route('login'))->with('danger', 'You must log in to proceed');;
     }
