@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Traits\OTPToken;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -25,6 +26,7 @@ class FortifyServiceProvider extends ServiceProvider
         {
             public function toResponse($request)
             {
+                (new OTPToken())->forgetSessionOTP();
                 return redirect(route('login'))->with('success', 'You are logged out successfully. Login again to proceed');
             }
         });

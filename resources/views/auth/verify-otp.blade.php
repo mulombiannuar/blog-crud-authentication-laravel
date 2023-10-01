@@ -6,8 +6,9 @@
         <h1>Verify OTP</h1>
 
         <!-- Forgot password form -->
-        <form action="{{ route('password.request') }}" method="post" id="otpForm" class="login-form">
+        <form action="{{ route('auth.otp.verify') }}" method="post" id="otpForm" class="login-form">
             @csrf
+            @method('POST')
             <div class="form-group">
                 <label for="otp">Enter OTP sent to <strong>{{ $mobile_number }}</strong> </label>
                 <input type="number" id="otp" name="otp" class="form-control"
@@ -21,6 +22,7 @@
             <button disabled type="submit" id="submit" class="btn btn-primary">
                 Verify OTP
             </button>
+            <p>Didn't receive OTP? <a href="{{ route('password.request') }}">Resend Now</a></p>
         </form>
         <!-- /form -->
     </div>

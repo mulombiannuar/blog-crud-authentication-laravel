@@ -36,30 +36,33 @@ Route::controller(PagesController::class)->group(function () {
     Route::get('about', 'aboutPage')->name('about');
 });
 
-Route::middleware(['auth', 'auth.otp'])->group(function () {
-
-    //Logged in user routes
+Route::middleware(['auth'])->group(function () {
 
     //Auth controller
     Route::controller(AuthController::class)->prefix('auth')->name('auth.')->group(function () {
         Route::get('otp/verify', 'otpToken')->name('otp');
         Route::post('otp/verify', 'verifyOTPToken')->name('otp.verify');
+        Route::post('otp/send', 'sendOTPToken')->name('otp.send');
     });
 
-    //Posts routes
-    Route::resource('posts', PostController::class, ['except' => ['index']]);
+    //Logged in user routes
+    Route::middleware(['auth.otp'])->group(function () {
 
-    // Admin routes
-    Route::middleware('auth')->group(function () {
-        Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+        //Posts routes
+        Route::resource('posts', PostController::class, ['except' => ['index']]);
 
-        Route::prefix('admin')->name('admin.')->group(function () {
-            Route::resource('categories', CategoryController::class, ['except' => ['index']]);
-            Route::controller(UserController::class)->group(function () {
-                Route::put('users/photo/{user}', 'uploadPhoto')->name('users.photo');
-                Route::put('users/activate/{user}',  'activateUser')->name('users.activate');
-                Route::put('users/deactivate/{user}', 'deactivateUser')->name('users.deactivate');
-                Route::resource('users', UserController::class, ['except' => ['index']]);
+        // Admin routes
+        Route::middleware('auth')->group(function () {
+            Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+
+            Route::prefix('admin')->name('admin.')->group(function () {
+                Route::resource('categories', CategoryController::class, ['except' => ['index']]);
+                Route::controller(UserController::class)->group(function () {
+                    Route::put('users/photo/{user}', 'uploadPhoto')->name('users.photo');
+                    Route::put('users/activate/{user}',  'activateUser')->name('users.activate');
+                    Route::put('users/deactivate/{user}', 'deactivateUser')->name('users.deactivate');
+                    Route::resource('users', UserController::class, ['except' => ['index']]);
+                });
             });
         });
     });

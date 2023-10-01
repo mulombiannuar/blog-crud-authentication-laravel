@@ -70,7 +70,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Africa/Nairobi',
 
     /*
     |--------------------------------------------------------------------------
@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         \Torann\GeoIP\GeoIPServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -186,6 +187,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'GeoIP' => \Torann\GeoIP\Facades\GeoIP::class,
+        'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
     ])->toArray(),
 
 ];
