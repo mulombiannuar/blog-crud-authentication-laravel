@@ -22,9 +22,14 @@
             <button disabled type="submit" id="submit" class="btn btn-primary">
                 Verify OTP
             </button>
-            <p>Didn't receive OTP? <a href="{{ route('password.request') }}">Resend Now</a></p>
         </form>
         <!-- /form -->
+        <p>Didn't receive OTP? <a href="{{ route('auth.otp.send') }}"
+                onclick="event.preventDefault(); document.getElementById('resend-form').submit();">Resend Now</a></p>
+        <form id="resend-form" action="{{ route('auth.otp.send') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+        <!-- /resend OTP form -->
     </div>
     <div class="col-lg-2"></div>
 @endsection

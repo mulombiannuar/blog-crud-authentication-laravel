@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Admin\SendOTPEmail;
+use App\Actions\Admin\SendSMS;
 use Closure;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\VerifyOTPRequest;
@@ -9,6 +11,8 @@ use App\Traits\OTPToken;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+
+use function App\Helpers\is_otp_verified;
 
 class AuthController extends Controller
 {
@@ -19,6 +23,7 @@ class AuthController extends Controller
     //Verify OTP
     public function otpToken(): View
     {
+        dd(is_otp_verified());
         $pageData = [
             'title' => 'Verify OTP',
             'email' => $this->filteredEmail(Auth::user()->email),
@@ -38,6 +43,26 @@ class AuthController extends Controller
         if ($response === 'verified' || $response === 'already-verified')
             return redirect(route('dashboard'))->with('success', 'You are logged in successfully');
 
-        return redirect(route('login'))->with('danger', 'You must log in to proceed');;
+        return back()->with('danger', 'You have entered wrong OTP code');;
+    }
+
+    //Resend OTP token
+    public function sendOTPToken(): RedirectResponse
+    {
+        $sms_count = $this->OTPSmsCount();
+        dd($sms_count);
+
+        $user = Auth::user();
+        $session_otp =  session('session_otp');
+        $subject = 'Session OTP Token - ' . now();
+        $message = $this->setOTPMessage($user->name, $session_otp);
+
+        //send session otp via sms
+        SendSMS::run($user->mobile_number, $message);
+
+        //send session otp via email
+        SendOTPEmail::run($user->name, $user->email, $message, $subject, $session_otp);
+
+        return back()->with('success', 'Enter OTP Code sent to ' . $this->filteredMobileNumber($user->mobile_number));
     }
 }

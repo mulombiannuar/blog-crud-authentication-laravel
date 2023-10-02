@@ -27,16 +27,13 @@ class UserLoggedInListener
 
         //parameters
         $subject = 'Session OTP Token - ' . now();
-        $name = $event->user->name;
-        $email = $event->user->email;
-        $mobile_number = $event->user->mobile_number;
-        $message = $this->setOTPMessage($name, $session_otp);
+        $message = $this->setOTPMessage($event->user->name, $session_otp);
 
         //send session otp via sms
-        SendSMS::run($mobile_number, $message);
+        SendSMS::run($event->user->mobile_numbe, $message);
 
         //send session otp via email
-        SendOTPEmail::run($name, $email, $message, $subject, $session_otp);
+        SendOTPEmail::run($event->user->name, $event->user->email, $message, $subject, $session_otp);;
     }
 
     public function generateSessionID(): String

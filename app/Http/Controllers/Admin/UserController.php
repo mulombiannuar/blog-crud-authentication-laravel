@@ -28,9 +28,9 @@ class UserController extends Controller
         $pageData = [
             'title' => 'Admin Dashboard',
             'posts' => Post::latest()->get(),
-            'users' => User::latest()->get(),
             'roles' => Role::latest()->get(),
-            'categories' => Category::latest()->get()
+            'categories' => Category::latest()->get(),
+            'users' => User::where('accessibility', '!=', 0)->latest()->get(),
         ];
         return view('dashboard', $pageData);
     }

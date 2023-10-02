@@ -25,6 +25,10 @@ class RedirectIfAuthenticated
             }
         }
 
+        if (auth() && is_otp_verified()) {
+            return $next($request);
+        }
+
         return $next($request);
     }
 }

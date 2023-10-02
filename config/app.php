@@ -171,6 +171,7 @@ return [
         App\Providers\FortifyServiceProvider::class,
         \Torann\GeoIP\GeoIPServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        App\Providers\HelperServiceProvider::class
     ])->toArray(),
 
     /*

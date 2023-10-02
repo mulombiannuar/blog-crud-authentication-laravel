@@ -152,6 +152,13 @@ trait OTPToken
         return $mobile_number;
     }
 
+    //OTP sms sent count
+    public function OTPSmsCount(): int
+    {
+        $count = 0;
+        return $count += 1;
+    }
+
     //set otp message sent to user
     public function setOTPMessage(String $username, String $otp): String
     {
