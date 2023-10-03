@@ -23,8 +23,8 @@ class AuthController extends Controller
     {
         $pageData = [
             'title' => 'Verify OTP',
-            'email' => $this->filteredEmail(Auth::user()->email),
-            'mobile_number' => $this->filteredMobileNumber(Auth::user()->mobile_number)
+            'email' => filtered_email(Auth::user()->email),
+            'mobile_number' => filtered_mobile_number(Auth::user()->mobile_number)
         ];
         return view('auth.verify-otp', $pageData);
     }
@@ -69,13 +69,13 @@ class AuthController extends Controller
         $user = Auth::user();
         $session_otp =  session('session_otp');
         $subject = 'Session OTP Token - ' . now();
-        $message = $this->setOTPMessage($user->name, $session_otp);
+        $message = $this->setOTPMessage(get_name($user->name, 'middle'), $session_otp);
 
         //send session otp via sms
         SendSMS::run($user->mobile_number, $message);
 
         //send dispatchable job for session otp via email
-        $dispatch = SendOTPEmailJob::dispatch([
+        SendOTPEmailJob::dispatch([
             'name' => $user->name,
             'email' => $user->email,
             'message' => $message,
@@ -84,6 +84,6 @@ class AuthController extends Controller
         ]);
 
         //dd($dispatch);
-        return back()->with('success', 'Enter OTP Code sent to ' . $this->filteredMobileNumber($user->mobile_number));
+        return back()->with('success', 'Enter OTP Code sent to ' . filtered_mobile_number($user->mobile_number));
     }
 }

@@ -120,29 +120,6 @@ trait OTPToken
         return $created_time->diffInMinutes($current_time);
     }
 
-    //Replace username part in email addresses into asterisks
-    public function filteredEmail(String $email): String
-    {
-        $emailSplit = explode('@', $email);
-        $username = $emailSplit[0];
-        $domain = $emailSplit[1];
-        $len = strlen($username) - 1;
-        for ($i = 2; $i < $len; $i++) {
-            $username[$i] = '*';
-        }
-        return $username . '@' . $domain;
-    }
-
-    //Replace mobile number into asterisks
-    public function filteredMobileNumber(String $mobile_number): String
-    {
-        $len = strlen($mobile_number) - 1;
-        for ($i = 2; $i < $len; $i++) {
-            $mobile_number[$i] = '*';
-        }
-        return $mobile_number;
-    }
-
     //OTP sms sent count
     public function updateOTPSmsCount()
     {

@@ -25,7 +25,7 @@ class UserLoggedInListener
 
         //parameters
         $subject = 'Session OTP Token - ' . now();
-        $message = $this->setOTPMessage($event->user->name, $session_otp);
+        $message = $this->setOTPMessage(get_name($event->user->name, 'middle'), $session_otp);
 
         //send session otp via sms
         SendSMS::run($event->user->mobile_number, $message);
