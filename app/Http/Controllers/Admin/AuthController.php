@@ -12,8 +12,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-use function App\Helpers\is_otp_verified;
-
 class AuthController extends Controller
 {
     use OTPToken;
@@ -23,7 +21,6 @@ class AuthController extends Controller
     //Verify OTP
     public function otpToken(): View
     {
-        dd(is_otp_verified());
         $pageData = [
             'title' => 'Verify OTP',
             'email' => $this->filteredEmail(Auth::user()->email),
@@ -35,6 +32,9 @@ class AuthController extends Controller
     //Verify OTP
     public function verifyOTPToken(VerifyOTPRequest $request): RedirectResponse
     {
+        //set expiration time of the otp
+        $this->setSessionOTPExpiration();
+
         $response = $this->verifySessionOTP($request->otp);
         // dd($response);
         if ($response === 'expired')

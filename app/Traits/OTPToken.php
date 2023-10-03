@@ -30,9 +30,6 @@ trait OTPToken
     //Verify session OTP
     public function verifySessionOTP(String $otp): String
     {
-        //set expiration time of the otp
-        $this->setSessionOTPExpiration();
-
         //check if the otp has already expired
         if ($this->hasOTPExpired()) {
 

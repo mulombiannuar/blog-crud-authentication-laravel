@@ -25,8 +25,10 @@ class RedirectIfAuthenticated
             }
         }
 
-        if (auth() && is_otp_verified()) {
-            return $next($request);
+        if (Auth::check()) {
+            if (is_otp_verified() && $request->route()->named('auth.otp')) {
+                return $next($request);
+            }
         }
 
         return $next($request);

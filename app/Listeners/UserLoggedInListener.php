@@ -23,6 +23,8 @@ class UserLoggedInListener
     {
         $session_otp = $this->generateOTP();
         $session_id = $this->generateSessionID();
+
+        //Set session otp
         $this->setSessionOTP($session_id, $session_otp);
 
         //parameters
@@ -30,10 +32,10 @@ class UserLoggedInListener
         $message = $this->setOTPMessage($event->user->name, $session_otp);
 
         //send session otp via sms
-        SendSMS::run($event->user->mobile_numbe, $message);
+        SendSMS::run($event->user->mobile_number, $message);
 
         //send session otp via email
-        SendOTPEmail::run($event->user->name, $event->user->email, $message, $subject, $session_otp);;
+        SendOTPEmail::run($event->user->name, $event->user->email, $message, $subject, $session_otp);
     }
 
     public function generateSessionID(): String
