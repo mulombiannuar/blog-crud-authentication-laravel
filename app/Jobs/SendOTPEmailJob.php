@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\SampleMail;
 use App\Mail\SendMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -16,7 +17,7 @@ class SendOTPEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $data;
+    protected $data;
     /**
      * Create a new job instance.
      */
@@ -31,13 +32,7 @@ class SendOTPEmailJob implements ShouldQueue
     public function handle()
     {
         try {
-            Mail::to($this->data['email'])->send(new SendMail([
-                'name' => $this->data['name'],
-                'email' =>  $this->data['email'],
-                'message' =>  $this->data['message'],
-                'subject' =>  $this->data['subject'],
-                'otp' =>  $this->data['session_otp']
-            ]));
+            Mail::to($this->data['email'])->send(new SendMail($this->data));
         } catch (\Throwable $e) {
             Log::error($e);
             throw $e;

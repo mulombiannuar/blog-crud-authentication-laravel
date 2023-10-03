@@ -75,15 +75,17 @@ class AuthController extends Controller
         SendSMS::run($user->mobile_number, $message);
 
         //send dispatchable job for session otp via email
-        SendOTPEmailJob::dispatch([
+        $data = [
             'name' => $user->name,
             'email' => $user->email,
             'message' => $message,
             'subject' => $subject,
-            'otp' => $session_otp
-        ]);
+            'session_otp' => $session_otp
+        ];
+        $job = (new SendOTPEmailJob($data))->delay(now()->addSeconds(5));
 
-        //dd($dispatch);
+        dispatch($job);
+
         return back()->with('success', 'Enter OTP Code sent to ' . filtered_mobile_number($user->mobile_number));
     }
 }

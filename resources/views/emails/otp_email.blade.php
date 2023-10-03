@@ -6,7 +6,7 @@
         <p>Below is your session OTP to login to {{ env('APP_NAME') }}. This OTP will expire after
             {{ env('OTP_EXPIRATION_TIME') }} minutes</p>
 
-        <h3><strong>{{ $data['otp'] }}</strong></h3>
+        <h3><strong>{{ $data['session_otp'] }}</strong></h3>
         <hr>
     </div>
 @endsection

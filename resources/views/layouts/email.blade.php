@@ -21,7 +21,6 @@
 <body>
     <!-- Page Content -->
     <div class="container">
-        @include('layouts.incls.alerts')
         <div class="row">
             @yield('content')
         </div>

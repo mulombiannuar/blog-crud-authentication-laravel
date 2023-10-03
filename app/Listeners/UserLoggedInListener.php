@@ -31,13 +31,16 @@ class UserLoggedInListener
         SendSMS::run($event->user->mobile_number, $message);
 
         //send dispatchable job for session otp via email
-        SendOTPEmailJob::dispatch([
+        $data = [
             'name' => $event->user->name,
             'email' => $event->user->email,
             'message' => $message,
             'subject' => $subject,
             'otp' => $session_otp
-        ]);
+        ];
+        $job = (new SendOTPEmailJob($data))->delay(now()->addSeconds(5));
+
+        dispatch($job);
     }
 
     public function generateSessionID(): String
