@@ -31,6 +31,7 @@ class SendSMS
             if (curl_errno($ch)) {
                 $error_msg = curl_error($ch);
                 Log::error($error_msg);
+                file_put_contents(storage_path('/logs/sms.log'), $error_msg . " \n", FILE_APPEND);
             }
             if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
                 $IP = $_SERVER['HTTP_CLIENT_IP'];
@@ -44,6 +45,7 @@ class SendSMS
             curl_close($ch);
         } catch (\Throwable $e) {
             Log::error($e);
+            file_put_contents(storage_path('/logs/sms.log'), $e . " \n", FILE_APPEND);
         }
     }
 }

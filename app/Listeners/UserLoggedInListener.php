@@ -2,15 +2,11 @@
 
 namespace App\Listeners;
 
-use App\Actions\Admin\SendOTPEmail;
 use App\Actions\Admin\SendSMS;
+use App\Jobs\SendOTPEmailJob;
 use App\Models\User;
 use App\Traits\OTPToken;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Auth;
-
 
 class UserLoggedInListener
 {
@@ -34,8 +30,14 @@ class UserLoggedInListener
         //send session otp via sms
         SendSMS::run($event->user->mobile_number, $message);
 
-        //send session otp via email
-        SendOTPEmail::run($event->user->name, $event->user->email, $message, $subject, $session_otp);
+        //send dispatchable job for session otp via email
+        SendOTPEmailJob::dispatch([
+            'name' => $event->user->name,
+            'email' => $event->user->email,
+            'message' => $message,
+            'subject' => $subject,
+            'otp' => $session_otp
+        ]);
     }
 
     public function generateSessionID(): String

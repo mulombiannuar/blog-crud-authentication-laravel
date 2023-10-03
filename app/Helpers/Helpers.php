@@ -2,7 +2,25 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
+//Current logged in user has specified role
+if (!function_exists('has_role')) {
+    function has_role($role_name): bool
+    {
+        return  Auth::user()->hasRole($role_name);
+    }
+}
+
+//Get current logged in authenticated user
+if (!function_exists('user')) {
+    function user(): User
+    {
+        return Auth::user();
+    }
+}
 
 //Change date format to specified one
 if (!function_exists('change_date_format')) {

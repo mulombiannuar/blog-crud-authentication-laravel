@@ -166,7 +166,7 @@ class PostController extends Controller
 
     private function isOwnerOfThePost(string $id): bool
     {
-        if (Post::findOrFail($id)->user_id == Auth::user()->id || Auth::user()->hasRole('admin'))
+        if (Post::findOrFail($id)->user_id == Auth::user()->id || has_role('admin'))
             return true;
         return false;
     }

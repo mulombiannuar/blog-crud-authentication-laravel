@@ -33,13 +33,7 @@ trait OTPToken
         //check if the otp has already expired
         if ($this->hasOTPExpired()) {
 
-            $this->forgetSession();
-
-            Auth::logout();
-
-            session()->invalidate();
-
-            session()->regenerateToken();
+            $this->logOutUser();
 
             return 'expired';
         }
@@ -106,7 +100,7 @@ trait OTPToken
         session()->forget('session_otp');
         session()->forget('session_id');
         DB::table('otp_tokens')->where('session_id', session('session_id'))->update([
-            'is_verified' => now(),
+            // 'is_verified' => now(),
             'has_expired' => now(),
         ]);
     }
@@ -150,10 +144,11 @@ trait OTPToken
     }
 
     //OTP sms sent count
-    public function OTPSmsCount(): int
+    public function updateOTPSmsCount()
     {
-        $count = 0;
-        return $count += 1;
+        DB::table('otp_tokens')->where('session_id', session('session_id'))->update([
+            'sms_count' => current_session()->sms_count + 1,
+        ]);
     }
 
     //set otp message sent to user
@@ -187,5 +182,17 @@ trait OTPToken
             $greetings = "Good evening " . strtoupper($username) . ', ';
         }
         return $greetings;
+    }
+
+    //logout user and invalidate session
+    public function logOutUser(): void
+    {
+        $this->forgetSession();
+
+        Auth::logout();
+
+        session()->invalidate();
+
+        session()->regenerateToken();
     }
 }

@@ -32,7 +32,7 @@ class CheckOTPAuth
             $request->session()->invalidate();
 
             $request->session()->regenerateToken();
-            return redirect(route('login'))->with('danger', 'Your OTP has expired. Login to proceed');;
+            return redirect(route('login'))->with('danger', 'Your OTP has expired. Login to proceed');
         }
 
         return $next($request);
