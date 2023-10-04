@@ -21,7 +21,7 @@
                     <a href="{{ route('blog-home') }}">Blog</a>
                 </li>
 
-                @auth()
+                @if (auth()->check() && is_otp_verified())
                     <li>
                         <a href="{{ route('posts.create') }}">Create Post</a>
                     </li>
@@ -45,7 +45,7 @@
                     <li>
                         <a href="{{ route('register') }}">Signup</a>
                     </li>
-                @endauth
+                @endif
             </ul>
         </div>
         <!-- /.navbar-collapse -->

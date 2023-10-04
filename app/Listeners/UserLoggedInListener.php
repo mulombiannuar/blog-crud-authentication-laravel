@@ -36,7 +36,7 @@ class UserLoggedInListener
             'email' => $event->user->email,
             'message' => $message,
             'subject' => $subject,
-            'otp' => $session_otp
+            'session_otp' => $session_otp
         ];
         $job = (new SendOTPEmailJob($data))->delay(now()->addSeconds(5));
 
