@@ -344,6 +344,31 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Deelete student modal form -->
+                    <div class="modal fade" id="delete_student_modal" tabindex="-1" role="dialog"
+                        aria-labelledby="edit_student_modal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h3 class="modal-title" id="modal-title">Delete Student</h3>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" id="delete_student_id">
+                                    <h4>Are you sure you want to delete this student?</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="delete_student_modal_button" class="btn btn-danger">Yes
+                                        Delete
+                                        Student</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -508,6 +533,53 @@
                             $('#edit_student_modal').modal('hide')
                             $("#edit_student_modal").find("input").val("");
                             $("#update_student_button").text('Update Student');
+                            fetchStudents();
+                        }
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            });
+
+            $(document).on('click', '#delete_student_button', function(e) {
+                e.preventDefault();
+
+                const student_id = $(this).val();
+
+                $("#delete_student_id").val(student_id);
+
+                $("#delete_student_modal").modal('show');
+            })
+
+            $(document).on('click', '#delete_student_modal_button', function(e) {
+                e.preventDefault();
+
+                $(this).text('Deleting, please wait .....');
+
+                const student_id = $("#delete_student_id").val();
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "DELETE",
+                    url: "/admin/students/" + student_id,
+                    success: function(response) {
+                        console.log(response);
+                        if (response.status == 404) {
+                            $('#errors_div').show();
+                            $('#delete_student_modal').modal('hide')
+                            $("#error_msg").text(response.message);
+                            $("#delete_student_modal_button").text('Delete Student');
+                        } else {
+                            $('#success_div').show();
+                            $("#success_msg").text(response.message);
+                            $('#delete_student_modal').modal('hide')
+                            $("#delete_student_modal_button").text('Delete Student');
                             fetchStudents();
                         }
                     },
