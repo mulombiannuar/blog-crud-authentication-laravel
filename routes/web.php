@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Blog\CategoryController;
 use App\Http\Controllers\Blog\PostController;
@@ -56,6 +57,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 
             Route::prefix('admin')->name('admin.')->group(function () {
+
+                Route::controller(StudentController::class)->group(function () {
+                    Route::resource('students', StudentController::class, ['except' => ['index', ',create']]);
+                    Route::get('fetch-students', 'fetchStudents')->name('students.fetch');
+                });
+
                 Route::resource('categories', CategoryController::class, ['except' => ['index']]);
                 Route::controller(UserController::class)->group(function () {
                     Route::put('users/photo/{user}', 'uploadPhoto')->name('users.photo');

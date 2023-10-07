@@ -13,6 +13,7 @@ use App\Http\Requests\UploadProfileImageRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Role;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -27,6 +28,7 @@ class UserController extends Controller
     {
         $pageData = [
             'title' => 'Admin Dashboard',
+            'password' => Str::password(),
             'posts' => Post::latest()->get(),
             'roles' => Role::latest()->get(),
             'categories' => Category::latest()->get(),
@@ -50,6 +52,8 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
+        // Retrieve the validated input data...
+        //$validated = $request->validated();
         (new CreateNewUser())->create($request->all());
 
         return redirect(route('dashboard'))->with('success', 'User data saved successfully');
