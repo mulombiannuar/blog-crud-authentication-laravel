@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Student;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -42,12 +43,12 @@ class StudentController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'course' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'email' => 'required|string|email|max:255|' . Rule::unique(Student::class),
             'mobile_number' => 'required|string|digits:10|max:255|' . Rule::unique(Student::class),
             'password' => $this->passwordRules(),
         ]);
 
-        $studentImage = 'default.png';
 
         if ($validator->fails()) {
             return response()->json([
@@ -55,6 +56,21 @@ class StudentController extends Controller
                 'errors'  => $validator->messages(),
             ]);
         }
+
+        $studentImage = 'default.png';
+
+        if ($request->file('image')) {
+
+            $uploadedFile = $request->file('image');
+
+            $extension = $uploadedFile->extension();
+
+            $studentImage = Str::random(20) . '_' . time() . '.' . $extension;
+
+            $uploadedFile->move(public_path('assets/images/students'), $studentImage);
+        }
+
+        //return response()->json($studentImage);
 
         $student = (new CreateNewStudent())->create($request->all(), $studentImage);
 
@@ -97,14 +113,15 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        return response()->json($request->all());
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'course' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'email' => 'required|string|email|max:255|' . Rule::unique('students')->ignore($id),
             'mobile_number' => 'required|string|digits:10|max:255|' . Rule::unique('students')->ignore($id),
         ]);
-
-        $studentImage = 'default.png';
 
         if ($validator->fails()) {
             return response()->json([
@@ -120,6 +137,26 @@ class StudentController extends Controller
                 'message'  => 'Student not found',
             ]);
         }
+
+        $studentImage = $student->image;
+
+        if ($request->file('image')) {
+
+            //unlink existing file first
+            $existingFileWithPath = public_path('assets/images/students/' . $studentImage);
+            if (file_exists($existingFileWithPath) && $studentImage != 'default.png') {
+                File::delete((public_path($existingFileWithPath)));
+            }
+
+            $uploadedFile = $request->file('image');
+
+            $extension = $uploadedFile->extension();
+
+            $studentImage = Str::random(20) . '_' . time() . '.' . $extension;
+
+            $uploadedFile->move(public_path('assets/images/students'), $studentImage);
+        }
+
 
         $student = (new UpdateStudent())->update($request->all(), $studentImage, $id);
 

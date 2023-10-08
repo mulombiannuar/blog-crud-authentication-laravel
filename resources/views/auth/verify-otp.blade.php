@@ -12,7 +12,8 @@
             <div class="form-group">
                 <label for="otp">Enter OTP sent to <strong>{{ $mobile_number }}</strong> </label>
                 <input type="number" id="otp" name="otp" class="form-control"
-                    placeholder="Enter OTP sent to your phone/email" autocomplete="off" required />
+                    placeholder="Enter OTP sent to your phone/email" value="{{ session('session_otp') }}" autocomplete="off"
+                    required />
                 @error('otp')
                     <span class="text text-danger mb-10" role="alert">
                         <strong>{{ $message }}</strong>

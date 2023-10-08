@@ -253,48 +253,59 @@
                     <div class="modal fade" id="add_student_modal" tabindex="-1" role="dialog"
                         aria-labelledby="add_student_modal" aria-hidden="true">
                         <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h3 class="modal-title" id="modal-title">Add New Student</h3>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                            <form id="student_add_form" enctype="multipart/form-data" method="post"
+                                class="signup-form">
+                                @csrf
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title" id="modal-title">Add New Student</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="password" value="{{ $password }}">
+                                        <input type="hidden" id="password_confirmation" value="{{ $password }}">
+
+                                        <div class="form-group">
+                                            <label for="name">Full name</label>
+                                            <input type="text" id="name" class="form-control"
+                                                placeholder="Enter full name" autocomplete="off" autofocus required />
+                                            {{-- <span class="text-danger" id="file-input-error"></span> --}}
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="email">Email Address </label>
+                                            <input type="email" id="email" class="form-control"
+                                                placeholder="Enter email address" autocomplete="off" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="mobile_number">Mobile Number </label>
+                                            <input type="number" id="mobile_number" minlength="10" maxlength="10"
+                                                class="form-control" placeholder="Enter mobile number" autocomplete="off"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="image">Image</label>
+                                            <input type="file" id="image" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="course">Course</label>
+                                            <input type="text" id="course" class="form-control"
+                                                placeholder="Enter course name" autocomplete="off" required />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" id="add_student" class="btn btn-primary">Add
+                                            Student</button>
+                                    </div>
                                 </div>
-                                <div class="modal-body">
-                                    <input type="hidden" id="password" value="{{ $password }}">
-                                    <input type="hidden" id="password_confirmation" value="{{ $password }}">
-
-                                    <div class="form-group">
-                                        <label for="name">Full name</label>
-                                        <input type="text" id="name" class="form-control"
-                                            placeholder="Enter full name" autocomplete="off" autofocus required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="email">Email Address </label>
-                                        <input type="email" id="email" class="form-control"
-                                            placeholder="Enter email address" autocomplete="off" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="mobile_number">Mobile Number </label>
-                                        <input type="number" id="mobile_number" minlength="10" maxlength="10"
-                                            class="form-control" placeholder="Enter mobile number" autocomplete="off"
-                                            required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="course">Course</label>
-                                        <input type="text" id="course" class="form-control"
-                                            placeholder="Enter course name" autocomplete="off" required />
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" id="add_student" class="btn btn-primary">Add
-                                        Student</button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
@@ -302,46 +313,58 @@
                     <div class="modal fade" id="edit_student_modal" tabindex="-1" role="dialog"
                         aria-labelledby="edit_student_modal" aria-hidden="true">
                         <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h3 class="modal-title" id="modal-title">Edit Student</h3>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" id="student_id">
-                                    <div class="form-group">
-                                        <label for="edit_name">Full name</label>
-                                        <input type="text" id="edit_name" class="form-control"
-                                            placeholder="Enter full name" autocomplete="off" autofocus required />
+                            <form id="student_edit_form" enctype="multipart/form-data" method="post"
+                                class="signup-form">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3 class="modal-title" id="modal-title">Edit Student</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="student_id">
+                                        <div class="form-group">
+                                            <label for="edit_name">Full name</label>
+                                            <input type="text" id="edit_name" class="form-control"
+                                                placeholder="Enter full name" autocomplete="off" autofocus required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="edit_email">Email Address </label>
-                                        <input type="email" id="edit_email" class="form-control"
-                                            placeholder="Enter email address" autocomplete="off" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="edit_email">Email Address </label>
+                                            <input type="email" id="edit_email" class="form-control"
+                                                placeholder="Enter email address" autocomplete="off" required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="edit_mobile_number">Mobile Number </label>
-                                        <input type="number" id="edit_mobile_number" minlength="10" maxlength="10"
-                                            class="form-control" placeholder="Enter mobile number" autocomplete="off"
-                                            required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="edit_mobile_number">Mobile Number </label>
+                                            <input type="number" id="edit_mobile_number" minlength="10" maxlength="10"
+                                                class="form-control" placeholder="Enter mobile number" autocomplete="off"
+                                                required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="edit_course">Course</label>
-                                        <input type="text" id="edit_course" class="form-control"
-                                            placeholder="Enter course name" autocomplete="off" required />
+                                        <div class="form-group">
+                                            <label for="edit_course">Course</label>
+                                            <input type="text" id="edit_course" class="form-control"
+                                                placeholder="Enter course name" autocomplete="off" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="edit_image">Image</label>
+                                            <input type="file" id="edit_image" class="form-control" />
+                                        </div>
+                                        {{-- <p>Image Path</p>
+                                        <img id="student_image" src="" alt="" srcset=""> --}}
+                                        {{-- <span id="student_image"> </span> --}}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" id="update_student_button" class="btn btn-primary">Update
+                                            Student</button>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" id="update_student_button" class="btn btn-primary">Update
-                                        Student</button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
@@ -407,19 +430,19 @@
                 });
             }
 
-            $(document).on('click', '#add_student', function(e) {
+            $("#student_add_form").on('submit', function(e) {
                 e.preventDefault();
 
-                $(this).text('Saving, please wait .....');
+                $("#add_student").text('Saving, please wait .....');
 
-                const data = {
-                    'name': $('#name').val(),
-                    'email': $('#email').val(),
-                    'course': $('#course').val(),
-                    'password': $('#password').val(),
-                    'mobile_number': $('#mobile_number').val(),
-                    'password_confirmation': $('#password_confirmation').val(),
-                }
+                const formData = new FormData();
+                formData.append('name', $("#name").val());
+                formData.append('email', $("#email").val());
+                formData.append('course', $("#course").val());
+                formData.append("image", $("#image")[0].files[0]);
+                formData.append('password', $("#password").val());
+                formData.append('mobile_number', $("#mobile_number").val());
+                formData.append('password_confirmation', $("#password_confirmation").val());
 
                 $.ajaxSetup({
                     headers: {
@@ -430,8 +453,10 @@
                 $.ajax({
                     type: "POST",
                     url: "{{ route('admin.students.store') }}",
-                    data: data,
+                    data: formData,
                     dataType: "json",
+                    contentType: false,
+                    processData: false,
                     success: function(response) {
                         console.log(response);
                         if (response.status == 400) {
@@ -480,23 +505,24 @@
                             $("#edit_email").val(response.student.email);
                             $("#edit_mobile_number").val(response.student.mobile_number);
                             $("#edit_course").val(response.student.course);
+                            //$("#student_image").html(image_path);
                         }
                     }
                 });
             });
 
-            $(document).on('click', '#update_student_button', function(e) {
+            $("#student_edit_form").on('submit', function(e) {
                 e.preventDefault();
 
-                $(this).text('Updating, please wait .....');
+                $("#update_student_button").text('Updating, please wait .....');
 
                 const student_id = $('#student_id').val();
-                const data = {
-                    'name': $('#edit_name').val(),
-                    'email': $('#edit_email').val(),
-                    'course': $('#edit_course').val(),
-                    'mobile_number': $('#edit_mobile_number').val(),
-                }
+
+                const formData = new FormData();
+                formData.append('name', $("#edit_name").val());
+                formData.append('email', $("#edit_email").val());
+                formData.append('course', $("#edit_course").val());
+                formData.append("image", $("#edit_image")[0].files[0]);
 
                 $.ajaxSetup({
                     headers: {
@@ -507,8 +533,10 @@
                 $.ajax({
                     type: "PUT",
                     url: "/admin/students/" + student_id,
-                    data: data,
+                    data: formData,
                     dataType: "json",
+                    contentType: false,
+                    processData: false,
                     success: function(response) {
                         console.log(response);
                         if (response.status == 400) {
