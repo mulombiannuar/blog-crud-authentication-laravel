@@ -50,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth.otp'])->group(function () {
 
         //Posts routes
+        Route::get('word-document', [PostController::class, 'wordDocument'])->name('word');
         Route::resource('posts', PostController::class, ['except' => ['index']]);
 
         // Admin routes

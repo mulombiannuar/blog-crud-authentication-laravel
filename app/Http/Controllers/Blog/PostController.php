@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Blog;
 
+use App\Actions\Admin\MediaUploading;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Category;
 use App\Models\Post;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,22 +48,9 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request): RedirectResponse
     {
-        $postImage = 'default.png';
-        //dd($request->file('post_image'));
-        if ($request->file('post_image')) {
-
-            $uploadedFile = $request->file('post_image');
-
-            //$fileName = $uploadedFile->hashName();;
-            //$fileName = $uploadedFile->getClientOriginalName();;
-
-            //$extension = $uploadedFile->getClientOriginalExtension();
-            $extension = $uploadedFile->extension();
-
-            $postImage = Str::random(20) . '_' . time() . '.' . $extension;
-
-            $uploadedFile->move(public_path('assets/images/posts'), $postImage);
-        }
+        $postImage = (new MediaUploading())->upload($request->file('post_image'), 'images/posts', 'default.png', null);
+        if (!$postImage)
+            return back()->with('danger', 'Post couldnt be saved because of invalid image');
 
         Post::create([
             'image' => $postImage,
@@ -104,26 +93,10 @@ class PostController extends Controller
 
         $post = Post::findOrFail($id);
         $postImage = $post->image;
-        if ($request->file('post_image')) {
 
-            //unlink existing file first
-            $existingFileWithPath = public_path('assets/images/posts/' . $postImage);
-            if (file_exists($existingFileWithPath) && $postImage != 'default.png') {
-                File::delete((public_path($existingFileWithPath)));
-            }
-
-            $uploadedFile = $request->file('post_image');
-
-            //$fileName = $uploadedFile->hashName();;
-            //$fileName = $uploadedFile->getClientOriginalName();;
-
-            //$extension = $uploadedFile->getClientOriginalExtension();
-            $extension = $uploadedFile->extension();
-
-            $postImage = Str::random(20) . '_' . time() . '.' . $extension;
-
-            $uploadedFile->move(public_path('assets/images/posts'), $postImage);
-        }
+        $postImage = (new MediaUploading())->upload($request->file('post_image'), 'images/posts', 'default.png', $post->image);
+        if (!$postImage)
+            return back()->with('danger', 'Post couldnt be saved because of invalid image');
 
         $post->update([
             'image' => $postImage,
@@ -169,5 +142,23 @@ class PostController extends Controller
         if (Post::findOrFail($id)->user_id == Auth::user()->id || has_role('admin'))
             return true;
         return false;
+    }
+
+    public function wordDocument()
+    {
+        $imagePath = realpath(__DIR__ . '/../../../../public/assets/images/posts/default.png');
+        $file_name = 'document-' . time() . '.docx';
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $section = $phpWord->addSection();
+        $description = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        $section->addImage($imagePath);
+        $section->addText($description);
+        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        try {
+            $objWriter->save(public_path('docs/' . $file_name));
+        } catch (Exception $e) {
+        }
+        return response()->download(public_path('docs/' . $file_name));
     }
 }
