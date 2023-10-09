@@ -3,14 +3,10 @@
     <!-- /.container -->
     <div class="col-sm-12" style="margin-top:20px;">
         <div class="container">
-            <div style="display: none" id="errors_div" class="alert alert-danger alert-dismissible" role="alert">
+            <div id="message_div" style="display: none" class="alert alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong id="message"></strong>
                 <ul id="errors_list"></ul>
-                <strong id="error_msg"></strong>
-            </div>
-            <div style="display: none" id="success_div" class="alert alert-success alert-dismissible" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <strong id="success_msg"></strong>
             </div>
         </div>
         <ul class="nav nav-pills">
@@ -315,6 +311,7 @@
                         <div class="modal-dialog" role="document">
                             <form id="student_edit_form" enctype="multipart/form-data" method="post"
                                 class="signup-form">
+                                @csrf
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h3 class="modal-title" id="modal-title">Edit Student</h3>
@@ -324,6 +321,9 @@
                                     </div>
                                     <div class="modal-body">
                                         <input type="hidden" id="student_id">
+                                        <p>Image</p>
+                                        <span id="student_image"> </span>
+
                                         <div class="form-group">
                                             <label for="edit_name">Full name</label>
                                             <input type="text" id="edit_name" class="form-control"
@@ -353,9 +353,7 @@
                                             <label for="edit_image">Image</label>
                                             <input type="file" id="edit_image" class="form-control" />
                                         </div>
-                                        {{-- <p>Image Path</p>
-                                        <img id="student_image" src="" alt="" srcset=""> --}}
-                                        {{-- <span id="student_image"> </span> --}}
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary"
@@ -433,6 +431,7 @@
             $("#student_add_form").on('submit', function(e) {
                 e.preventDefault();
 
+                $("#add_student").prop('disabled', true);
                 $("#add_student").text('Saving, please wait .....');
 
                 const formData = new FormData();
@@ -449,7 +448,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
-
+                //console.log(formData);
                 $.ajax({
                     type: "POST",
                     url: "{{ route('admin.students.store') }}",
@@ -458,29 +457,28 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        console.log(response);
+                        //console.log(response);
+                        $('#message_div').css('display', 'block');
+                        $('#message_div').addClass(response.class_name);
+                        $('#message').html(response.message);
+                        $('#add_student_modal').modal('hide')
+                        $("#student_add_form").find("input").val("");
+                        $("#add_student").text('Add Student');
+                        $("#add_student").prop('disabled', false);
                         if (response.status == 400) {
-                            $('#success_div').hide();
-                            $('#errors_div').show();
-                            $('#add_student_modal').modal('hide')
                             $.each(response.errors, function(key, err) {
                                 $('#errors_list').append(
                                     '<li style="font-weight:bold;">' +
                                     err + '</li>');
                             });
-                            $("#add_student").text('Add Student');
-                        } else {
-                            $('#success_div').show();
-                            $('#errors_div').hide();
-                            $("#success_msg").text(response.message);
-                            $('#add_student_modal').modal('hide')
-                            $("#add_student_modal").find("input").val("");
-                            $("#add_student").text('Add Student');
-                            fetchStudents();
                         }
+                        fetchStudents();
                     },
                     error: function(err) {
                         console.log(err);
+                        $('#message_div').css('display', 'block');
+                        $('#message_div').addClass('alert-danger');
+                        $('#message').html(err.message);
                     }
                 });
             });
@@ -497,15 +495,16 @@
                     success: function(response) {
                         // console.log(response);
                         if (response.status == 404) {
-                            $('#errors_div').show();
-                            $("#error_msg").text(response.message);
+                            $('#message_div').css('display', 'block');
+                            $('#message_div').addClass(response.class_name);
+                            $('#message').html(response.message);
                         } else {
                             $("#student_id").val(student_id);
                             $("#edit_name").val(response.student.name);
                             $("#edit_email").val(response.student.email);
                             $("#edit_mobile_number").val(response.student.mobile_number);
                             $("#edit_course").val(response.student.course);
-                            //$("#student_image").html(image_path);
+                            $("#student_image").html(response.image);
                         }
                     }
                 });
@@ -514,14 +513,18 @@
             $("#student_edit_form").on('submit', function(e) {
                 e.preventDefault();
 
+                $("#update_student_button").prop('disabled', true);
                 $("#update_student_button").text('Updating, please wait .....');
 
+                //const form = e.target;
                 const student_id = $('#student_id').val();
 
                 const formData = new FormData();
+                formData.append('_method', 'PUT');
                 formData.append('name', $("#edit_name").val());
                 formData.append('email', $("#edit_email").val());
                 formData.append('course', $("#edit_course").val());
+                formData.append('mobile_number', $("#edit_mobile_number").val());
                 formData.append("image", $("#edit_image")[0].files[0]);
 
                 $.ajaxSetup({
@@ -531,41 +534,36 @@
                 });
 
                 $.ajax({
-                    type: "PUT",
+                    type: "POST",
+                    //url: $(this).prop('action'),
                     url: "/admin/students/" + student_id,
                     data: formData,
                     dataType: "json",
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        console.log(response);
+                        //console.log(response);
+                        $('#message_div').css('display', 'block');
+                        $('#message_div').addClass(response.class_name);
+                        $('#message').html(response.message);
+                        $('#edit_student_modal').modal('hide')
+                        $("#student_edit_form").find("input").val("");
+                        $("#update_student_button").text('Update Student');
+                        $("#update_student_button").prop('disabled', false);
                         if (response.status == 400) {
-                            $('#errors_div').show();
-                            $("#success_div").hide();
-                            $('#edit_student_modal').modal('hide')
                             $.each(response.errors, function(key, err) {
                                 $('#errors_list').append(
                                     '<li style="font-weight:bold;">' +
                                     err + '</li>');
                             });
-                            $("#update_student_button").text('Update Student');
-                        } else if (response.status == 404) {
-                            $('#errors_div').show();
-                            $("#success_div").hide();
-                            $('#edit_student_modal').modal('hide')
-                            $("#error_msg").text(response.message);
-                            $("#update_student_button").text('Update Student');
-                        } else {
-                            $('#success_div').show();
-                            $("#success_msg").text(response.message);
-                            $('#edit_student_modal').modal('hide')
-                            $("#edit_student_modal").find("input").val("");
-                            $("#update_student_button").text('Update Student');
-                            fetchStudents();
                         }
+                        fetchStudents();
                     },
                     error: function(err) {
                         console.log(err);
+                        $('#message_div').css('display', 'block');
+                        $('#message_div').addClass('alert-danger');
+                        $('#message').html(err.message);
                     }
                 });
             });

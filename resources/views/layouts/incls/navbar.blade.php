@@ -39,14 +39,14 @@
                         </form>
                     </li>
                 @else
-                    @if (!Route::currentRouteName() == 'otp')
-                        <li>
-                            <a href="{{ route('login') }}">Login</a>
-                        </li>
-                        <li>
-                            <a href="{{ route('register') }}">Signup</a>
-                        </li>
-                    @endif
+                    {{-- @if (!Route::currentRouteName() == 'otp') --}}
+                    <li>
+                        <a href="{{ route('login') }}">Login</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('register') }}">Signup</a>
+                    </li>
+                    {{-- @endif --}}
                 @endif
             </ul>
         </div>

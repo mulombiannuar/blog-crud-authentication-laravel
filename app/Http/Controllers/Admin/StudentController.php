@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\Admin\CreateNewStudent;
+use App\Actions\Admin\MediaUploading;
 use App\Actions\Admin\UpdateStudent;
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Http\Controllers\Controller;
@@ -32,6 +33,7 @@ class StudentController extends Controller
         return response()->json([
             'status'  => 200,
             'students'  => $students,
+            'class_name'  => 'alert-success'
         ]);
     }
 
@@ -49,34 +51,25 @@ class StudentController extends Controller
             'password' => $this->passwordRules(),
         ]);
 
-
         if ($validator->fails()) {
             return response()->json([
                 'status'  => 400,
                 'errors'  => $validator->messages(),
+                'class_name'  => 'alert-danger'
             ]);
         }
 
-        $studentImage = 'default.png';
+        $studentImage = (new MediaUploading())->upload($request->file('image'), 'images/students', 'default.png', null);
 
-        if ($request->file('image')) {
-
-            $uploadedFile = $request->file('image');
-
-            $extension = $uploadedFile->extension();
-
-            $studentImage = Str::random(20) . '_' . time() . '.' . $extension;
-
-            $uploadedFile->move(public_path('assets/images/students'), $studentImage);
-        }
-
-        //return response()->json($studentImage);
+        if (!$studentImage)
+            return back()->with('danger', 'Student couldnt be saved because of invalid image provided');
 
         $student = (new CreateNewStudent())->create($request->all(), $studentImage);
 
         return response()->json([
             'status'  => 200,
             'data' => $student,
+            'class_name'  => 'alert-success',
             'message'  => 'Student data saved successfully',
         ]);
     }
@@ -91,21 +84,16 @@ class StudentController extends Controller
             return response()->json([
                 'status'  => 404,
                 'message'  => 'Student not found',
+                'class_name'  => 'alert-success'
             ]);
         }
 
         return response()->json([
             'status'  => 200,
             'student'  => $student,
+            'class_name'  => 'alert-success',
+            'image' => '<img src="/assets/images/students/' . $student->image . '" class="img-thumbnail" width="200" />',
         ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -113,8 +101,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return response()->json($request->all());
-
+        //return response()->json($request->all());
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'course' => 'required|string|max:255',
@@ -126,6 +113,7 @@ class StudentController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status'  => 400,
+                'class_name'  => 'alert-danger',
                 'errors'  => $validator->messages(),
             ]);
         }
@@ -134,35 +122,21 @@ class StudentController extends Controller
         if (!$student) {
             return response()->json([
                 'status'  => 404,
+                'class_name'  => 'alert-danger',
                 'message'  => 'Student not found',
             ]);
         }
 
-        $studentImage = $student->image;
-
-        if ($request->file('image')) {
-
-            //unlink existing file first
-            $existingFileWithPath = public_path('assets/images/students/' . $studentImage);
-            if (file_exists($existingFileWithPath) && $studentImage != 'default.png') {
-                File::delete((public_path($existingFileWithPath)));
-            }
-
-            $uploadedFile = $request->file('image');
-
-            $extension = $uploadedFile->extension();
-
-            $studentImage = Str::random(20) . '_' . time() . '.' . $extension;
-
-            $uploadedFile->move(public_path('assets/images/students'), $studentImage);
-        }
-
+        $studentImage = (new MediaUploading())->upload($request->file('image'), 'images/students', 'default.png', $student->image);
+        if (!$studentImage)
+            return back()->with('danger', 'Student couldnt be saved because of invalid image provided');
 
         $student = (new UpdateStudent())->update($request->all(), $studentImage, $id);
 
         return response()->json([
             'status'  => 200,
             'data' => $student,
+            'class_name'  => 'alert-success',
             'message'  => 'Student data updated successfully',
         ]);
     }
@@ -177,6 +151,7 @@ class StudentController extends Controller
         if (!$student) {
             return response()->json([
                 'status'  => 404,
+                'class_name'  => 'alert-danger',
                 'message'  => 'Student not found',
             ]);
         }
@@ -185,6 +160,7 @@ class StudentController extends Controller
         return response()->json([
             'status'  => 200,
             'data' => $student,
+            'class_name'  => 'alert-success',
             'message'  => 'Student data deleted successfully',
         ]);
     }
