@@ -443,11 +443,6 @@
                 formData.append('mobile_number', $("#mobile_number").val());
                 formData.append('password_confirmation', $("#password_confirmation").val());
 
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
                 //console.log(formData);
                 $.ajax({
                     type: "POST",
@@ -456,13 +451,15 @@
                     dataType: "json",
                     contentType: false,
                     processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         //console.log(response);
                         $('#message_div').css('display', 'block');
                         $('#message_div').addClass(response.class_name);
                         $('#message').html(response.message);
                         $('#add_student_modal').modal('hide')
-                        $("#student_add_form").find("input").val("");
                         $("#add_student").text('Add Student');
                         $("#add_student").prop('disabled', false);
                         if (response.status == 400) {
@@ -471,6 +468,8 @@
                                     '<li style="font-weight:bold;">' +
                                     err + '</li>');
                             });
+                        } else {
+                            $("#student_add_form").find("input").val("");
                         }
                         fetchStudents();
                     },
@@ -527,12 +526,6 @@
                 formData.append('mobile_number', $("#edit_mobile_number").val());
                 formData.append("image", $("#edit_image")[0].files[0]);
 
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
                 $.ajax({
                     type: "POST",
                     //url: $(this).prop('action'),
@@ -541,13 +534,15 @@
                     dataType: "json",
                     contentType: false,
                     processData: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response) {
                         //console.log(response);
                         $('#message_div').css('display', 'block');
                         $('#message_div').addClass(response.class_name);
                         $('#message').html(response.message);
                         $('#edit_student_modal').modal('hide')
-                        $("#student_edit_form").find("input").val("");
                         $("#update_student_button").text('Update Student');
                         $("#update_student_button").prop('disabled', false);
                         if (response.status == 400) {
@@ -556,6 +551,8 @@
                                     '<li style="font-weight:bold;">' +
                                     err + '</li>');
                             });
+                        } else {
+                            $("#student_edit_form").find("input").val("");
                         }
                         fetchStudents();
                     },
