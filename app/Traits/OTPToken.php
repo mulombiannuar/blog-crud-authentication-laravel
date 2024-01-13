@@ -6,10 +6,8 @@ namespace App\Traits;
 
 
 use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 trait OTPToken
 {
@@ -120,7 +118,7 @@ trait OTPToken
         return DB::table('otp_tokens')->where('session_id', session('session_id'))->first();
     }
 
-    //Get OTP life time in hours
+    //Get OTP life time in minutes
     private function getOTPLifeTime(): int
     {
         $session =  DB::table('otp_tokens')->where('session_id', session('session_id'))->first();
@@ -162,7 +160,7 @@ trait OTPToken
     //set otp message sent to user
     public function setOTPMessage(String $username, String $otp): String
     {
-        return $this->getGreetings($username) . 'your OTP is ' . $otp . ' and expires in ' . env('OTP_EXPIRATION_TIME') . ' mins';
+        return $this->getGreetings($username) . 'your OTP is ' . $otp . ' and expires in ' . env('OTP_EXPIRATION_TIME') . ' minutes';
     }
 
     //Generate OTP

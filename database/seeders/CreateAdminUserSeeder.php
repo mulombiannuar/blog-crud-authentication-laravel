@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class CreateAdminUserSeeder extends Seeder
@@ -16,7 +17,9 @@ class CreateAdminUserSeeder extends Seeder
      */
     public function run(): void
     {
+        Schema::disableForeignKeyConstraints();
         DB::table('users')->truncate();
+        Schema::enableForeignKeyConstraints();
         User::create([
             'name' => 'Anuary Mulombi',
             'email' => 'mulombiannuar@gmail.com',

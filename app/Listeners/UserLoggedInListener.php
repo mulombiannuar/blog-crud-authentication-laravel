@@ -25,12 +25,13 @@ class UserLoggedInListener
         $session_id = $this->generateSessionID();
         $this->setSessionOTP($session_id, $session_otp);
 
+        //dd($session_otp);
         //parameters
         $subject = 'Session OTP Token - ' . now();
         $message = $this->setOTPMessage($event->user->name, $session_otp);
 
         //send session otp via sms
-        SendSMS::run($event->user->mobile_numbe, $message);
+        SendSMS::run($event->user->mobile_number, $message);
 
         //send session otp via email
         SendOTPEmail::run($event->user->name, $event->user->email, $message, $subject, $session_otp);;

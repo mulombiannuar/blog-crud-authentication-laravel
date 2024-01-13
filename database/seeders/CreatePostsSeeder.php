@@ -18,7 +18,7 @@ class CreatePostsSeeder extends Seeder
             'description' => 'Description for post 1',
             'body' => 'Body for post 1',
             'slug' => 'post-1',
-            'category_id' => 9,
+            'category_id' => 1,
             'user_id' => 1,
             'image' => 'image1.png'
         ]);
@@ -28,7 +28,7 @@ class CreatePostsSeeder extends Seeder
             'description' => 'Description for post 2',
             'body' => 'Body for post 2',
             'slug' => 'post-2',
-            'category_id' => 10,
+            'category_id' => 2,
             'user_id' => 1,
             'image' => 'image1.png'
         ]);
@@ -38,7 +38,7 @@ class CreatePostsSeeder extends Seeder
             'slug' => 'post-3',
             'description' => 'Description for post 3',
             'body' => 'Body for post 3',
-            'category_id' => 11,
+            'category_id' => 3,
             'user_id' => 1,
             'image' => 'image1.png'
         ]);

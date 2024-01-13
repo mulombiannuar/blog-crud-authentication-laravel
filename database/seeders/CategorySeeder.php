@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CategorySeeder extends Seeder
 {
@@ -20,7 +21,9 @@ class CategorySeeder extends Seeder
             'Photoshop'
         ];
 
+        Schema::disableForeignKeyConstraints();
         DB::table('categories')->truncate();
+        Schema::enableForeignKeyConstraints();
         foreach ($categories as $category) {
             Category::insert([
                 'name' => $category

@@ -23,7 +23,7 @@ class AuthController extends Controller
     //Verify OTP
     public function otpToken(): View
     {
-        dd(is_otp_verified());
+        //dd(is_otp_verified());
         $pageData = [
             'title' => 'Verify OTP',
             'email' => $this->filteredEmail(Auth::user()->email),

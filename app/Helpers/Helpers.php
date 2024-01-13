@@ -33,7 +33,10 @@ if (!function_exists('is_otp_verified')) {
     function is_otp_verified(): bool
     {
         $session = DB::table('otp_tokens')->where('session_id', session('session_id'))->first();
-        return $session->is_verified ? true : false;
+        if ($session) {
+            return $session->is_verified ? true : false;
+        }
+        return false;
     }
 }
 
